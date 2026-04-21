@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Три вопроса — интерактивный сайт</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* легкая имитация приложения, но текст можно выделить */
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* основной контейнер карточек */
+        .cards-container {
+            max-width: 1300px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        /* стиль каждой карточки вопроса */
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 380px;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 32px 55px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* верхняя часть с картинкой / иконкой вопроса */
+        .question-visual {
+            background: #ffffff;
+            padding: 28px 20px 20px 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* специфика для карты (чтобы была адаптивной) */
+        .map-container {
+            width: 100%;
+            background: #fef7e0;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        canvas.map-canvas {
+            width: 100%;
+            height: auto;
+            background: #fff8e7;
+            border-radius: 24px;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* жесты рук - canvas */
+        .hands-canvas {
+            background: #faf3e0;
+            border-radius: 40px;
+            width: 100%;
+            height: auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .smiley-area {
+            font-size: 4rem;
+            letter-spacing: 12px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e2f3e;
+            padding: 12px 20px 0 20px;
+            text-align: center;
+            background: white;
+        }
+
+        /* ответная зона */
+        .answer-zone {
+            padding: 20px 24px 28px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .option-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .option-btn:hover {
+            background: #e2e8f0;
+            transform: scale(0.97);
+        }
+
+        .option-btn.selected {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 6px 14px rgba(59,130,246,0.3);
+        }
+
+        .feedback {
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 60px;
+            background: #f8fafc;
+            color: #2c3e4e;
+            font-weight: 500;
+            transition: 0.1s;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: #334155;
+            margin-bottom: 5px;
+        }
+
+        hr {
+            margin: 8px 0;
+            border-color: #eef2ff;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 40px;
+            color: #5b6e8c;
+        }
+
+        @media (max-width: 900px) {
+            .cards-container {
+                gap: 20px;
+            }
+            .question-visual {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div style="width:100%">
+    <div class="cards-container">
+        <!-- КАРТОЧКА 1: СМАЙЛИКИ + "как ты?" -->
+        <div class="question-card">
+            <div class="question-visual">
+                <div class="smiley-area">
+                    <span>😊</span> <span>😐</span> <span>😢</span> <span>🥳</span> <span>😴</span>
+                </div>
+            </div>
+            <div class="question-text">
+                🤔 Как ты? 🤗
+            </div>
+            <div class="answer-zone" id="q1-zone">
+                <div class="options" id="q1-options">
+                    <button class="option-btn" data-val="отлично">✨ Отлично</button>
+                    <button class="option-btn" data-val="нормально">🌤️ Нормально</button>
+                    <button class="option-btn" data-val="грустно">🌧️ Грустно</button>
+                    <button class="option-btn" data-val="супер">🚀 Супер</button>
+                </div>
+                <div class="feedback" id="q1-feedback">👉 Нажми на смайлик-настроения</div>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА 2: КАРТА С БОЛЬНИЦЕЙ + "как дойти до больницы?" -->
+        <div class="question-card">
+            <div class="question-visual" style="background: #fef3c7;">
+                <div class="map-container">
+                    <canvas id="hospitalMapCanvas" class="map-canvas" width="340" height="240" style="width:100%; height:auto; max-width:340px; aspect-ratio:340/240"></canvas>
+                </div>
+            </div>
+            <div class="question-text">
+                🏥 Как дойти до больницы? 🚶
+            </div>
+            <div class="answer-zone" id="q2-zone">
+                <div class="options" id="q2-options">
+                    <button class="option-btn" data-val="налево">⬅️ Налево, потом прямо</button>
+                    <button class="option-btn" data-val="направо">➡️ Направо, потом за угол</button>
+                    <button class="option-btn" data-val="прямо">⬆️ Прямо до светофора</button>
+                    <button class="option-btn" data-val="за спиной">🔙 Развернуться назад</button>
+                </div>
+                <div class="feedback" id="q2-feedback">🗺️ Выбери маршрут на карте</div>
+            </div>
+        </div>
+
+        <!-- КАРТОЧКА 3: РУКИ + ЖЕСТЫ (динамический вопрос) -->
+        <div class="question-card">
+            <div class="question-visual" style="background: #e6f0fa;">
+                <canvas id="handsGestureCanvas" class="hands-canvas" width="340" height="200" style="width:100%; height:auto; max-width:340px; aspect-ratio:340/200"></canvas>
+            </div>
+            <div class="question-text">
+                ✋ Язык жестов: что значит этот жест? 🧐
+            </div>
+            <div class="answer-zone" id="q3-zone">
+                <div class="options" id="q3-options">
+                    <button class="option-btn" data-val="привет">👋 Привет / Пока</button>
+                    <button class="option-btn" data-val="хорошо">👍 Всё отлично (ОК)</button>
+                    <button class="option-btn" data-val="вопрос">🤷 Вопрос / Не знаю</button>
+                    <button class="option-btn" data-val="стоп">✋ Стоп / Подожди</button>
+                </div>
+                <div class="feedback" id="q3-feedback">🖐️ Выбери, что выражает этот жест</div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        💡 Три вопроса — отвечай, нажимай на варианты, каждый жест и карта созданы вручную ✨
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // --------------------------------------------------------------
+        // 1) ВОПРОС СО СМАЙЛИКАМИ (первый вопрос)
+        const q1Feedback = document.getElementById('q1-feedback');
+        const q1Btns = document.querySelectorAll('#q1-options .option-btn');
+        let q1Answered = false;
+
+        function setQ1Answer(value) {
+            if (q1Answered) {
+                q1Feedback.innerText = '✅ Ты уже ответил(а) на вопрос! Настроение: ' + value;
+                return;
+            }
+            q1Answered = true;
+            let responseText = '';
+            switch(value) {
+                case 'отлично': responseText = '😍 Отлично! Рад за тебя, пусть улыбка не сходит с лица!'; break;
+                case 'нормально': responseText = '🌿 Нормально — это тоже хорошо. Солнышко выглянет!'; break;
+                case 'грустно': responseText = '💪 Грусть пройдёт, ты сильный(ая)! Обними виртуально 🤗'; break;
+                case 'супер': responseText = '🎉 Супер-пупер! Энергия зашкаливает 🔥'; break;
+                default: responseText = 'Спасибо за ответ!';
+            }
+            q1Feedback.innerHTML = `😊 Ты ответил(а): ${value}. ${responseText}`;
+            // выделим выбранную кнопку
+            q1Btns.forEach(btn => {
+                btn.classList.remove('selected');
+                if(btn.getAttribute('data-val') === value) btn.classList.add('selected');
+            });
+        }
+
+        q1Btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const val = btn.getAttribute('data-val');
+                setQ1Answer(val);
+            });
+        });
+
+        // --------------------------------------------------------------
+        // 2) ВТОРОЙ ВОПРОС: КАРТА С БОЛЬНИЦЕЙ (рисованная canvas)
+        const mapCanvas = document.getElementById('hospitalMapCanvas');
+        const ctx = mapCanvas.getContext('2d');
+        // установим реальные размеры для четкости
+        function resizeMapCanvas() {
+            const container = mapCanvas.parentElement;
+            const maxWidth = Math.min(340, container.clientWidth);
+            mapCanvas.style.width = `${maxWidth}px`;
+            mapCanvas.width = 340;
+            mapCanvas.height = 240;
+            drawHospitalMap();
+        }
+        
+        function drawHospitalMap() {
+            if (!ctx) return;
+            const w = 340, h = 240;
+            ctx.clearRect(0, 0, w, h);
+            // фон земли
+            ctx.fillStyle = '#d9e6b3';
+            ctx.fillRect(0, 0, w, h);
+            // дороги (серые)
+            ctx.fillStyle = '#b0a790';
+            // главная дорога горизонтальная
+            ctx.fillRect(0, h/2 + 10, w, 28);
+            // вертикальная дорога
+            ctx.fillRect(w/2 - 15, 0, 30, h);
+            // перекресток
+            ctx.fillStyle = '#9c8e7c';
+            ctx.fillRect(w/2 - 15, h/2 + 10, 30, 28);
+            
+            // разметка (белая пунктирная линия)
+            ctx.beginPath();
+            ctx.setLineDash([8, 12]);
+            ctx.strokeStyle = '#fff9e0';
+            ctx.lineWidth = 2;
+            // гориз. линия по центру дороги
+            ctx.moveTo(0, h/2 + 24);
+            ctx.lineTo(w, h/2 + 24);
+            ctx.stroke();
+            // верт. линия
+            ctx.moveTo(w/2, 10);
+            ctx.lineTo(w/2, h-10);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Домики/здания
+            ctx.fillStyle = '#e3b87c';
+            ctx.fillRect(30, 30, 45, 40);
+            ctx.fillStyle = '#b97f44';
+            ctx.fillRect(35, 35, 35, 30);
+            ctx.fillStyle = '#ad8b5e';
+            ctx.fillRect(240, 40, 50, 45);
+            
+            // БОЛЬНИЦА (красный крест, в конце маршрута) - расположим в правом верхнем углу?
+            // Сделаем больницу в конце дороги, справа внизу или вверху? По смыслу "конец пути" - добавим на перекрестке + в конце тупика? 
+            // Лучше: больница в правом нижнем углу, куда ведет дорога. Нарисуем здание с крестом.
+            ctx.fillStyle = '#f4b3a2';
+            ctx.shadowBlur = 0;
+            ctx.fillRect(270, 180, 55, 45);
+            ctx.fillStyle = '#d9435e';
+            ctx.font = "bold 28px 'Segoe UI'";
+            ctx.fillText("🏥", 282, 215);
+            ctx.fillStyle = "#c0392b";
+            ctx.font = "12px sans-serif";
+            ctx.fillText("БОЛЬНИЦА", 275, 235);
+            
+            // дополнительный указатель направления стрелка к больнице
+            ctx.beginPath();
+            ctx.moveTo(250, 200);
+            ctx.lineTo(265, 200);
+            ctx.lineTo(260, 193);
+            ctx.fillStyle = '#2c3e66';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(250, 200);
+            ctx.lineTo(265, 200);
+            ctx.lineTo(260, 207);
+            ctx.fill();
+            
+            // Начальная точка (человечек)
+            ctx.fillStyle = '#2c6e9e';
+            ctx.beginPath();
+            ctx.arc(45, h/2 + 24, 9, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = "bold 16px sans-serif";
+            ctx.fillText("🚶", 38, h/2 + 28);
+            ctx.fillStyle = "#1e3a4d";
+            ctx.font = "10px sans-serif";
+            ctx.fillText("Вы здесь", 25, h/2+8);
+            
+            // Подписи направлений
+            ctx.fillStyle = '#2d3748';
+            ctx.font = "bold 10px 'Segoe UI'";
+            ctx.fillText("← Налево", 80, h/2-8);
+            ctx.fillText("Направо →", 260, h/2-8);
+            ctx.fillText("⬆ Прямо", w/2-20, 20);
+            
+            // стрелки подсказки
+            ctx.fillStyle = '#e67e22';
+            ctx.beginPath();
+            ctx.moveTo(140, h/2+14);
+            ctx.lineTo(150, h/2+24);
+            ctx.lineTo(140, h/2+34);
+            ctx.fill();
+            ctx.fillStyle = '#e67e22';
+            ctx.beginPath();
+            ctx.moveTo(195, h/2+14);
+            ctx.lineTo(185, h/2+24);
+            ctx.lineTo(195, h/2+34);
+            ctx.fill();
+        }
+
+        // ответы на второй вопрос (карта)
+        const q2Feedback = document.getElementById('q2-feedback');
+        const q2Btns = document.querySelectorAll('#q2-options .option-btn');
+        let q2Answered = false;
+        
+        function setQ2Answer(direction) {
+            if (q2Answered) {
+                q2Feedback.innerText = `🗺️ Ты уже выбрал путь: "${direction}". Другой маршрут? Обнови страницу для повторного квеста :)`;
+                return;
+            }
+            q2Answered = true;
+            let message = '';
+            // в зависимости от направления показываем, приводит ли к больнице (по карте правильный путь: налево? на самом деле по рисунку больница внизу справа, надо идти направо и потом вниз)
+            // сделаем интерактив: правильный путь до больницы — "направо", потом прямо по нижней дороге? Но упростим: из точки старта (лево-центр) до больницы нужно идти направо и чуть вниз.
+            if (direction === 'направо') {
+                message = '✅ Верно! Двигайся направо по главной улице, затем на перекрёстке сверни к больнице. Вы у цели! 🏥';
+            } else if (direction === 'прямо') {
+                message = '⚠️ Прямо ведёт к жилому кварталу, больница останется справа. Лучше вернись и поверни направо!';
+            } else if (direction === 'налево') {
+                message = '🧭 Налево — парковая зона, больница не там. Нужно было направо!';
+            } else {
+                message = '🔄 Развернуться — не лучший вариант. Больница впереди, если пойти направо!';
+            }
+            q2Feedback.innerHTML = `🚶 ${message} (выбрано: ${direction})`;
+            q2Btns.forEach(btn => {
+                btn.classList.remove('selected');
+                if(btn.getAttribute('data-val') === direction) btn.classList.add('selected');
+            });
+            // дополнительно подсветим на карте правильный маршрут? Нарисуем стрелку поверх?
+            drawHospitalMap();
+            ctx.save();
+            if(direction === 'направо') {
+                ctx.beginPath();
+                ctx.moveTo(70, 144);
+                ctx.lineTo(280, 144);
+                ctx.lineTo(280, 190);
+                ctx.strokeStyle = '#2ecc71';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([8, 8]);
+                ctx.stroke();
+                ctx.fillStyle = '#2ecc71';
+                ctx.font = "bold 12px";
+                ctx.fillText("✔ правильный путь", 110, 130);
+            } else if(direction === 'налево') {
+                ctx.beginPath();
+                ctx.moveTo(60, 144);
+                ctx.lineTo(30, 100);
+                ctx.strokeStyle = '#e67e22';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillText("❌ тупик", 20, 90);
+            }
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+        
+        q2Btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const dir = btn.getAttribute('data-val');
+                setQ2Answer(dir);
+            });
+        });
+        
+        // --------------------------------------------------------------
+        // 3) ТРЕТИЙ ВОПРОС: РУКИ + ЖЕСТЫ (рисованные руки, которые задают вопрос)
+        const handsCanvas = document.getElementById('handsGestureCanvas');
+        const handsCtx = handsCanvas.getContext('2d');
+        
+        function drawHandsWithGesture(gestureType = 'question') {
+            // gestureType может быть "question" (вопросительный жест) или можно менять, но суть — руки задают вопрос, используя жесты.
+            // Мы нарисуем две руки: одна показывает "не знаю / вопрос" (пожимание плечами), вторая указывает или поднята.
+            handsCanvas.width = 340;
+            handsCanvas.height = 200;
+            const ctxH = handsCtx;
+            ctxH.clearRect(0, 0, 340, 200);
+            ctxH.fillStyle = '#f7f2e0';
+            ctxH.fillRect(0, 0, 340, 200);
+            // фон легкий
+            // левая рука (раскрытая ладонь вверх с вопросительным знаком)
+            ctxH.fillStyle = '#f0cf9c';
+            // рисование упрощённых рук-силуэтов
+            // левая рука: предплечье
+            ctxH.beginPath();
+            ctxH.moveTo(60, 140);
+            ctxH.lineTo(80, 100);
+            ctxH.lineTo(100, 90);
+            ctxH.lineTo(115, 105);
+            ctxH.lineTo(100, 125);
+            ctxH.fill();
+            ctxH.fillStyle = '#d9a066';
+            ctxH.beginPath();
+            ctxH.ellipse(85, 80, 18, 22, 0.2, 0, Math.PI*2);
+            ctxH.fill();
+            // пальцы левой руки (жест "вопрос" — растопыренные)
+            ctxH.fillStyle = '#e0b17b';
+            for(let i=0;i<4;i++) {
+                let angle = -0.5 + i*0.4;
+                let xOff = 70 + i*10;
+                ctxH.beginPath();
+                ctxH.ellipse(xOff, 65, 6, 12, angle, 0, Math.PI*2);
+                ctxH.fill();
+            }
+            // большой палец
+            ctxH.beginPath();
+            ctxH.ellipse(58, 72, 7, 12, -0.7, 0, Math.PI*2);
+            ctxH.fill();
+            
+            // Правая рука — жест "вопросительный знак" пальцем у виска или просто жест "хм?"
+            ctxH.fillStyle = '#f0cf9c';
+            ctxH.beginPath();
+            ctxH.moveTo(260, 140);
+            ctxH.lineTo(245, 95);
+            ctxH.lineTo(225, 82);
+            ctxH.lineTo(210, 98);
+            ctxH.lineTo(230, 118);
+            ctxH.fill();
+            ctxH.fillStyle = '#d9a066';
+            ctxH.beginPath();
+            ctxH.ellipse(250, 70, 18, 22, -0.1, 0, Math.PI*2);
+            ctxH.fill();
+            // пальцы правой руки: указательный вверх (вопросительный жест)
+            ctxH.fillStyle = '#c98f54';
+            ctxH.beginPath();
+            ctxH.ellipse(258, 50, 7, 16, -0.2, 0, Math.PI*2);
+            ctxH.fill();
+            ctxH.beginPath();
+            ctxH.ellipse(245, 55, 7, 14, 0.1, 0, Math.PI*2);
+            ctxH.fill();
+            ctxH.beginPath();
+            ctxH.ellipse(235, 60, 6, 12, 0.2, 0, Math.PI*2);
+            ctxH.fill();
+            // большой палец
+            ctxH.beginPath();
+            ctxH.ellipse(268, 64, 7, 11, 0.5, 0, Math.PI*2);
+            ctxH.fill();
+            
+            // рисуем большие вопросительные знаки над руками
+            ctxH.font = "bold 28px 'Segoe UI'";
+            ctxH.fillStyle = "#2c5282";
+            ctxH.fillText("❓", 95, 45);
+            ctxH.fillText("🤷", 245, 35);
+            ctxH.font = "bold 14px sans-serif";
+            ctxH.fillStyle = "#1e3a5f";
+            ctxH.fillText("Какой жест задаёт вопрос?", 115, 180);
+            // дополнительно рисуем вопросительную линию
+            ctxH.beginPath();
+            ctxH.moveTo(130, 60);
+            ctxH.quadraticCurveTo(150, 30, 170, 55);
+            ctxH.strokeStyle = '#e67e22';
+            ctxH.lineWidth = 2;
+            ctxH.stroke();
+        }
+        
+        drawHandsWithGesture('question');
+        
+        // третий вопрос: выбор значения жеста (какой вопрос?)
+        const q3Feedback = document.getElementById('q3-feedback');
+        const q3Btns = document.querySelectorAll('#q3-options .option-btn');
+        let q3Answered = false;
+        
+        function setQ3Answer(gestureMeaning) {
+            if (q3Answered) {
+                q3Feedback.innerText = `🖐️ Ты уже ответил(а): "${gestureMeaning}". Обнови страницу, чтобы выбрать заново.`;
+                return;
+            }
+            q3Answered = true;
+            let explanation = '';
+            let correct = false;
+            if (gestureMeaning === 'вопрос') {
+                explanation = '🎯 Точно! Жест раскрытой ладони и указательный палец вверх, пожимание плечами — классический "вопрос" или "не знаю". Молодец!';
+                correct = true;
+            } else if (gestureMeaning === 'привет') {
+                explanation = '👋 Это приветствие, но на рисунке жест больше похож на "вопрос". Присмотрись к вопросительным знакам!';
+            } else if (gestureMeaning === 'хорошо') {
+                explanation = '👍 Жест "ОК" — это кружок из пальцев. У нас руки с вопросительными знаками, так что это вопрос!';
+            } else {
+                explanation = '✋ Ладонь "стоп" — это открытая ладонь. А здесь мы изобразили жест недоумения/вопроса. Правильный ответ — "Вопрос / Не знаю"!';
+            }
+            if (correct) {
+                q3Feedback.innerHTML = `✅ ${explanation} <span style="color:#2b6e3b;">(верно!)</span>`;
+            } else {
+                q3Feedback.innerHTML = `❓ ${explanation} Попробуй ещё раз? (но ответ уже принят) Правильный жест — "Вопрос" 🤷`;
+            }
+            q3Btns.forEach(btn => {
+                btn.classList.remove('selected');
+                if(btn.getAttribute('data-val') === gestureMeaning) btn.classList.add('selected');
+            });
+            // перерисуем руки с небольшим акцентом, если ответ верный
+            if(correct) {
+                drawHandsWithGesture('question');
+                handsCtx.fillStyle = '#2ecc71';
+                handsCtx.font = "bold 20px";
+                handsCtx.fillText("✓", 310, 30);
+            } else {
+                drawHandsWithGesture('question');
+                handsCtx.fillStyle = '#e67e22';
+                handsCtx.fillText("?", 310, 30);
+            }
+        }
+        
+        q3Btns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const meaning = btn.getAttribute('data-val');
+                setQ3Answer(meaning);
+            });
+        });
+        
+        window.addEventListener('resize', () => {
+            resizeMapCanvas();
+            drawHandsWithGesture('question');
+        });
+        resizeMapCanvas();
+        // перерисовка карты при необходимости
+        drawHospitalMap();
+    })();
+</script>
+</body>
+</html>
