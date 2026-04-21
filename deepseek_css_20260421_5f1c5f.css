@@ -1,0 +1,390 @@
+/* ------------------------------- global ------------------------------- */
+/* Адаптированный и улучшенный CSS для сайта с тремя вопросами */
+/* Сохранена оригинальная структура grid, но стили полностью обновлены */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* -------------------- body -------------------- */
+.global__body {
+    margin: 0px;
+    padding: 0px;
+    display: grid;
+    grid-template-areas: 'header'
+                         'main'
+                         'footer';
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+    background: linear-gradient(145deg, #f0f4fa 0%, #d9e0e8 100%);
+    color: #1e2f3e;
+}
+
+/* -------------------- header -------------------- */
+.global__header {
+    grid-area: header;
+    display: grid;
+    grid-template-areas: 'logo title'
+                         'logo nav';
+    grid-template-columns: 100px 1fr;
+    grid-template-rows: auto auto;
+    background: linear-gradient(135deg, #2c5a7a 0%, #1e3e5a 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem 2rem;
+}
+
+.global__header-logo {
+    grid-area: logo;
+    padding: 8px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.global__header-logo img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    transition: transform 0.2s ease;
+}
+
+.global__header-logo img:hover {
+    transform: scale(1.05);
+}
+
+.global__header-title {
+    grid-area: title;
+    padding: 12px 0px 0px 20px;
+    margin: 0px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.global__header-title h1 {
+    margin: 0px;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+/* -------------------- nav in header -------------------- */
+.global__nav {
+    grid-area: nav;
+    padding: 8px 0px 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.global__nav a {
+    padding: 6px 16px;
+    text-decoration: none;
+    border-radius: 40px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.25s ease;
+    font-size: 0.95rem;
+}
+
+.global__nav a:hover {
+    background: #ffb347;
+    color: #2c3e2f;
+    border-color: #ffb347;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* -------------------- main -------------------- */
+.global__main {
+    grid-area: main;
+    display: grid;
+    grid-template-areas: 'questions'
+                         'blocks';
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ----- Секция с тремя вопросами (вместо слайдера) ----- */
+.global__questions {
+    grid-area: questions;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Карточка вопроса */
+.question-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(2px);
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s;
+    border: 1px solid rgba(255,245,220,0.8);
+}
+
+.question-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 40px -16px rgba(0, 0, 0, 0.25);
+}
+
+.card-header {
+    padding: 1.2rem 2rem;
+    background: linear-gradient(120deg, #fef9e6, #fff5e0);
+    border-bottom: 2px solid #ffd966;
+}
+
+.card-header h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #2c5a7a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* Зона картинки / медиа */
+.media-area {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    min-height: 280px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+/* Смайлики */
+.smiley-set {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.smiley {
+    font-size: 4.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8f3e8;
+    padding: 0.6rem 1rem;
+    border-radius: 80px;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.smiley:hover {
+    transform: scale(1.2);
+    background: #ffe0b5;
+    box-shadow: 0 10px 18px rgba(0,0,0,0.15);
+}
+
+.smiley.selected {
+    background: #c8e7ff;
+    outline: 4px solid #2b7fc1;
+    transform: scale(1.08);
+}
+
+/* Карта с больницей */
+.hospital-map {
+    background: #eaf4e8;
+    border-radius: 1.8rem;
+    padding: 1rem;
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: inset 0 0 0 2px #fff8, 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.map-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 1.2rem;
+    background: #fff8e7;
+}
+
+.map-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.8rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    flex-wrap: wrap;
+}
+
+/* Жесты рук */
+.gesture-panel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.8rem;
+    align-items: stretch;
+}
+
+.gesture-card {
+    background: #f4ede3;
+    border-radius: 1.8rem;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    width: 150px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 6px 0 #bcaea0;
+}
+
+.gesture-card.selected {
+    background: #ffe3b5;
+    box-shadow: 0 0 0 3px #ffaa44, 0 4px 12px rgba(0,0,0,0.2);
+    transform: scale(1.02);
+}
+
+.gesture-emoji {
+    font-size: 3.5rem;
+    display: inline-block;
+    margin-bottom: 0.6rem;
+}
+
+.gesture-text {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #3a2c1e;
+}
+
+/* Зона ответа */
+.answer-area {
+    padding: 1rem 2rem 1.5rem;
+    background: #f9fbfe;
+    border-top: 1px solid #e2e8f0;
+}
+
+.answer-status {
+    background: #eef3fc;
+    border-radius: 60px;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.answer-message {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #1c5a7a;
+}
+
+.reset-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    background: #d9e2ef;
+    padding: 0.4rem 1.2rem;
+    border-radius: 40px;
+    transition: 0.1s linear;
+    font-weight: 600;
+}
+
+.reset-btn:hover {
+    background: #c0d0e2;
+    transform: scale(0.96);
+}
+
+/* -------------------- blocks main (оригинальные блоки) -------------------- */
+.global__blocks {
+    grid-area: blocks;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #ffd966;
+}
+
+.global__blocks-item {
+    width: 220px;
+    padding: 1.2rem;
+    margin: 0;
+    border-radius: 1.2rem;
+    color: #2d3e50;
+    background: #ffffffea;
+    border: 1px solid #ffdd99;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.global__blocks-item:hover {
+    transform: translateY(-6px);
+    background: #fffcf0;
+    border-color: #ffb347;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+/* -------------------- footer -------------------- */
+.global__footer {
+    grid-area: footer;
+    text-align: center;
+    padding: 1.2rem;
+    background: linear-gradient(135deg, #2c5a7a 0%, #1e3e5a 100%);
+    color: #f0e6c5;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+/* Адаптивность */
+@media (max-width: 860px) {
+    .global__main {
+        padding: 1rem;
+    }
+    .card-header h2 {
+        font-size: 1.3rem;
+    }
+    .gesture-card {
+        width: 130px;
+    }
+    .global__blocks {
+        justify-content: center;
+    }
+    .global__blocks-item {
+        width: 280px;
+    }
+}
+
+@media (max-width: 600px) {
+    .global__header {
+        grid-template-areas: 'logo title'
+                             'nav nav';
+        grid-template-columns: 80px 1fr;
+        padding: 0.5rem;
+    }
+    .global__nav {
+        padding-left: 1rem;
+        justify-content: center;
+    }
+    .smiley {
+        font-size: 3rem;
+    }
+}

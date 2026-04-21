@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Три вопроса | PROTON</title>
+    <link rel="stylesheet" href="css/global.css">
+    <!-- скрипт автообновления можно оставить, но он не влияет на функционал -->
+    <script src="js/autoreload.js"></script>
+    <style>
+        /* небольшие донастройки для совместимости с оригинальным autoreload */
+        .global__slider {
+            display: none; /* скрываем старый слайдер, используем новый блок с вопросами */
+        }
+        /* плавные переходы */
+        .question-card, .gesture-card, .smiley, .reset-btn {
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+    </style>
+</head>
+<body class="global__body">
+    <header class="global__header">
+        <div class="global__header-logo">
+            <!-- Вы можете заменить на своё изображение: img/proton_logo.png -->
+            <img src="img/proton_logo.png" width="70" height="70" alt="Logo of PROTON">
+        </div>
+        <div class="global__header-title">
+            <h1>PROTON | Три вопроса</h1>
+        </div>
+        <nav class="global__nav">
+            <a href="#">главная</a>
+            <a href="#">о компании</a>
+            <a href="#">продукты</a>
+            <a href="#">обратная связь</a>
+        </nav>
+    </header>
+
+    <main class="global__main">
+        <!-- НОВЫЙ БЛОК С ТРЕМЯ ВОПРОСАМИ (вместо старого слайдера) -->
+        <section class="global__questions">
+            <!-- ВОПРОС 1: Смайлики "как ты?" -->
+            <div class="question-card" id="q1-card">
+                <div class="card-header">
+                    <h2>❓ Вопрос №1: Как твоё настроение? (выбери смайлик)</h2>
+                </div>
+                <div class="media-area">
+                    <div class="smiley-set" id="smiley-group">
+                        <div class="smiley" data-mood="отлично!">😊</div>
+                        <div class="smiley" data-mood="нормально">😐</div>
+                        <div class="smiley" data-mood="грустновато">😔</div>
+                        <div class="smiley" data-mood="супер весело">🤩</div>
+                        <div class="smiley" data-mood="устал(а)">😴</div>
+                    </div>
+                </div>
+                <div class="answer-area" id="q1-answer-area">
+                    <div class="answer-status">
+                        <span class="answer-message" id="q1-message">⚡ Нажми на любой смайлик, чтобы ответить</span>
+                        <button class="reset-btn" data-reset="1">🗑️ Сбросить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ВОПРОС 2: Карта "как дойти до больницы" -->
+            <div class="question-card" id="q2-card">
+                <div class="card-header">
+                    <h2>🏥 Вопрос №2: Как дойти до больницы? (нажми на верный путь)</h2>
+                </div>
+                <div class="media-area">
+                    <div class="hospital-map">
+                        <svg class="map-svg" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="600" height="320" fill="#dde9c1" rx="16" ry="16"/>
+                            <path d="M50 160 L550 160" stroke="#a57c4c" stroke-width="12" stroke-dasharray="8 6" fill="none"/>
+                            <path d="M300 40 L300 280" stroke="#a57c4c" stroke-width="12" stroke-dasharray="8 6" fill="none"/>
+                            <circle cx="300" cy="160" r="14" fill="#ebcba0" stroke="#8b5a2b" stroke-width="2"/>
+                            <circle cx="80" cy="160" r="18" fill="#f5bc70" stroke="#3f2a10" stroke-width="2.5"/>
+                            <text x="62" y="140" font-size="12" fill="#2d1f0c" font-weight="bold">🚶‍♂️ Вы</text>
+                            <rect x="500" y="210" width="70" height="70" rx="12" fill="#ffd1b3" stroke="#bf6f3c" stroke-width="2"/>
+                            <text x="515" y="245" font-size="18" fill="#a3320b">🏥</text>
+                            <text x="508" y="268" font-size="12" fill="#882d0a">БОЛЬНИЦА</text>
+                            <circle cx="180" cy="110" r="14" fill="#b3d9ff" stroke="#1e5f8e"/>
+                            <text x="170" y="106" font-size="10">⛲</text>
+                            <circle cx="420" cy="90" r="12" fill="#c0d6b3" stroke="#3e6b2f"/>
+                            <text x="413" y="86" font-size="11">🏪</text>
+                            <path d="M98 155 L140 155 L160 130 L220 130 L260 110 L300 110 L340 130 L400 140 L450 160 L490 190 L500 210" 
+                                  stroke="#ff7b2c" stroke-width="4" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+                            <defs>
+                                <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                                    <polygon points="0 0, 8 4, 0 8" fill="#ff7b2c"/>
+                                </marker>
+                            </defs>
+                            <text x="240" y="90" fill="#b64926" font-size="12" font-weight="bold">👉 правильный маршрут</text>
+                        </svg>
+                        <div class="map-legend">
+                            <span>📍 Вы здесь</span>
+                            <span>🏥 Конечная цель — больница</span>
+                            <span>🟠 Оранжевая линия → путь</span>
+                        </div>
+                        <p style="text-align:center; margin-top:12px; font-size:0.9rem;">💡 Нажми на кнопку ниже: «Я выбрал маршрут»</p>
+                    </div>
+                </div>
+                <div class="answer-area" id="q2-answer-area">
+                    <div class="answer-status">
+                        <span class="answer-message" id="q2-message">🧭 Изучи карту и нажми «Подтвердить путь»</span>
+                        <button class="reset-btn" id="confirm-road">✅ Подтвердить путь</button>
+                        <button class="reset-btn" data-reset="2">🗑️ Сбросить</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ВОПРОС 3: Жесты рук, задающие вопрос -->
+            <div class="question-card" id="q3-card">
+                <div class="card-header">
+                    <h2>✋ Вопрос №3: Что означают эти жесты? (выбери жест, который задаёт вопрос)</h2>
+                </div>
+                <div class="media-area">
+                    <div class="gesture-panel" id="gesture-container">
+                        <div class="gesture-card" data-gesture="question-asking" data-question-text="❓ 'Ты понял?' — жест-вопрос">
+                            <div class="gesture-emoji">🤷‍♂️✋</div>
+                            <div class="gesture-text">Пожимание плечами + рука вверх</div>
+                        </div>
+                        <div class="gesture-card" data-gesture="point-ask" data-question-text="👉 'Куда идти?' — указывающий жест">
+                            <div class="gesture-emoji">👉🧐</div>
+                            <div class="gesture-text">Указующий перст + недоумение</div>
+                        </div>
+                        <div class="gesture-card" data-gesture="thinking" data-question-text="🤔 'Что происходит?' — жест сомнения">
+                            <div class="gesture-emoji">🤔✊</div>
+                            <div class="gesture-text">Рука у подбородка (задумчивость)</div>
+                        </div>
+                        <div class="gesture-card" data-gesture="stop-ask" data-question-text="🛑 'Стоп, вопрос?' — жест «стоп»">
+                            <div class="gesture-emoji">🖐️❓</div>
+                            <div class="gesture-text">Раскрытая ладонь (остановись, вопрос?)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="answer-area" id="q3-answer-area">
+                    <div class="answer-status">
+                        <span class="answer-message" id="q3-message">🖐️ Нажми на любой жест, который по твоему мнению задаёт вопрос</span>
+                        <button class="reset-btn" data-reset="3">🗑️ Сбросить</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ОРИГИНАЛЬНЫЕ БЛОКИ (как в вашем макете, вы можете позже наполнить своим контентом) -->
+        <section class="global__blocks">
+            <div class="global__blocks-item">
+                Здесь вы можете разместить информацию о компании или любые новости. Добавьте свои картинки позже.
+            </div>
+            <div class="global__blocks-item">
+                Блок с преимуществами или ссылками. Полностью готов к наполнению вашими изображениями и текстом.
+            </div>
+            <div class="global__blocks-item">
+                Третий блок. Стили сохранены, цветовая гамма приятная, фон светлый.
+            </div>
+            <div class="global__blocks-item">
+                Четвертый элемент. Адаптивная сетка подстраивается под ширину экрана.
+            </div>
+            <div class="global__blocks-item">
+                Пятый блок — вы можете добавить сюда контакты или короткую заметку.
+            </div>
+        </section>
+    </main>
+
+    <footer class="global__footer">
+        PROTON | Интерактивные вопросы<br>
+        Современный дизайн, три уникальных задания
+    </footer>
+
+    <script>
+        // ----- ПОЛНОСТЬЮ РАБОТАЮЩАЯ ЛОГИКА ТРЁХ ВОПРОСОВ -----
+        let answers = {
+            q1: null,
+            q2: false,
+            q3: null
+        };
+
+        const q1Message = document.getElementById('q1-message');
+        const q2Message = document.getElementById('q2-message');
+        const q3Message = document.getElementById('q3-message');
+
+        // --- Вопрос 1: смайлики ---
+        const smileyItems = document.querySelectorAll('.smiley');
+        function updateQ1Visual(selectedMoodText) {
+            smileyItems.forEach(s => {
+                if (s.getAttribute('data-mood') === selectedMoodText) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        }
+
+        function setAnswerQ1(mood) {
+            answers.q1 = mood;
+            q1Message.innerHTML = `😀 Твой ответ: «${mood}»! Спасибо, что поделился настроением.`;
+            updateQ1Visual(mood);
+            saveToLocal();
+        }
+
+        smileyItems.forEach(smiley => {
+            smiley.addEventListener('click', (e) => {
+                const moodValue = smiley.getAttribute('data-mood');
+                setAnswerQ1(moodValue);
+            });
+        });
+
+        // --- Вопрос 2: карта + больница ---
+        const confirmRoadBtn = document.getElementById('confirm-road');
+        function setAnswerQ2(confirmed) {
+            if (confirmed) {
+                answers.q2 = true;
+                q2Message.innerHTML = '🏆 Отлично! Ты выбрал правильный маршрут до больницы (следуй за оранжевой линией)! Теперь ты знаешь, как дойти. 🚑';
+            } else {
+                answers.q2 = false;
+                q2Message.innerHTML = '🧭 Изучи карту и нажми «Подтвердить путь»';
+            }
+            saveToLocal();
+        }
+
+        confirmRoadBtn.addEventListener('click', () => {
+            setAnswerQ2(true);
+            const mapSvg = document.querySelector('.map-svg');
+            if(mapSvg) {
+                mapSvg.style.filter = 'drop-shadow(0 0 6px #ffaa55)';
+                setTimeout(() => { mapSvg.style.filter = ''; }, 500);
+            }
+        });
+
+        // --- Вопрос 3: жесты рук ---
+        const gestureCards = document.querySelectorAll('.gesture-card');
+        function updateGestureVisual(selectedGesture) {
+            gestureCards.forEach(card => {
+                const gestureVal = card.getAttribute('data-gesture');
+                if (gestureVal === selectedGesture) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        function setAnswerQ3(gestureId, questionText) {
+            answers.q3 = gestureId;
+            q3Message.innerHTML = `✋ Жест выбран: ${questionText} — да, этот жест действительно задаёт вопрос! 👍`;
+            updateGestureVisual(gestureId);
+            saveToLocal();
+        }
+
+        gestureCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const gestureId = card.getAttribute('data-gesture');
+                const questionTextRaw = card.getAttribute('data-question-text');
+                setAnswerQ3(gestureId, questionTextRaw);
+            });
+        });
+
+        // --- сброс ---
+        const resetButtons = document.querySelectorAll('[data-reset]');
+        resetButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const resetId = btn.getAttribute('data-reset');
+                if (resetId === '1') {
+                    answers.q1 = null;
+                    q1Message.innerHTML = '⚡ Нажми на любой смайлик, чтобы ответить';
+                    updateQ1Visual(null);
+                    saveToLocal();
+                } 
+                else if (resetId === '2') {
+                    answers.q2 = false;
+                    q2Message.innerHTML = '🧭 Изучи карту и нажми «Подтвердить путь»';
+                    saveToLocal();
+                }
+                else if (resetId === '3') {
+                    answers.q3 = null;
+                    q3Message.innerHTML = '🖐️ Нажми на любой жест, который по твоему мнению задаёт вопрос';
+                    updateGestureVisual(null);
+                    saveToLocal();
+                }
+            });
+        });
+
+        // --- localStorage ---
+        function saveToLocal() {
+            const toStore = {
+                q1: answers.q1,
+                q2: answers.q2,
+                q3: answers.q3
+            };
+            localStorage.setItem('threeQuestionsSite', JSON.stringify(toStore));
+        }
+
+        function loadFromLocal() {
+            const saved = localStorage.getItem('threeQuestionsSite');
+            if (!saved) return;
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.q1) {
+                    answers.q1 = parsed.q1;
+                    q1Message.innerHTML = `😀 Твой ответ: «${answers.q1}»! Спасибо, что поделился настроением.`;
+                    updateQ1Visual(answers.q1);
+                }
+                if (parsed.q2 === true) {
+                    answers.q2 = true;
+                    q2Message.innerHTML = '🏆 Отлично! Ты выбрал правильный маршрут до больницы! 🚑';
+                } else if (parsed.q2 === false) {
+                    answers.q2 = false;
+                    q2Message.innerHTML = '🧭 Изучи карту и нажми «Подтвердить путь»';
+                }
+                if (parsed.q3) {
+                    answers.q3 = parsed.q3;
+                    let gestureTextFound = "жест";
+                    for(let card of gestureCards) {
+                        if(card.getAttribute('data-gesture') === parsed.q3) {
+                            gestureTextFound = card.getAttribute('data-question-text');
+                            break;
+                        }
+                    }
+                    q3Message.innerHTML = `✋ Жест выбран: ${gestureTextFound} — да, этот жест задаёт вопрос! 👍`;
+                    updateGestureVisual(parsed.q3);
+                }
+            } catch(e) {}
+        }
+
+        loadFromLocal();
+        if(!answers.q1) updateQ1Visual(null);
+        if(!answers.q3) updateGestureVisual(null);
+    </script>
+</body>
+</html>
